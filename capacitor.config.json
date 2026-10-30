@@ -1,0 +1,12 @@
+{
+  "appId": "com.quancheng.saomiao",
+  "appName": "全澄扫描王",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#0e1014"
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

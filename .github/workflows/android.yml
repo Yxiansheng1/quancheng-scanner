@@ -1,0 +1,95 @@
+name: 构建 Android APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 发布 Release 需要写权限，默认是只读
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: 安装 JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      # ubuntu 运行器自带 Android SDK，直接用，不再装第三方 action
+      - name: 检查 Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          ls "$ANDROID_HOME" || true
+
+      - name: 安装 SDK 平台组件
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER="$(find "$ANDROID_HOME" -name sdkmanager -type f | head -n 1)"
+          fi
+          echo "sdkmanager: $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses > /dev/null 2>&1 || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-36" "build-tools;36.0.0" || \
+            "$SDKMANAGER" "platform-tools" "platforms;android-36" || true
+
+      - name: 缓存 Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ hashFiles('android/**/*.gradle*', 'android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: gradle-
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 打包网页资源
+        run: npm run build
+
+      - name: 同步到安卓工程
+        run: npx cap sync android
+
+      - name: 编译 APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: 上传 APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: quancheng-scanner-debug
+          path: android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+      # 发布到 Release：这样不用登录 GitHub 也能直接点链接下载
+      - name: 发布 APK 到 Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v0.1.${{ github.run_number }}
+          name: 全澄扫描王 v0.1.${{ github.run_number }}
+          body: |
+            安卓安装包（debug 签名，可直接安装）。
+
+            安装步骤：手机上点开下面这个 apk 下载 → 允许「安装未知来源应用」→ 安装。
+          files: android/app/build/outputs/apk/debug/*.apk
+          draft: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

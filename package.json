@@ -1,0 +1,25 @@
+{
+  "name": "quanchengsaomiaowang",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "全澄扫描王 —— 离线文档扫描（Android 版）",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "sync": "npm run build && cap sync android",
+    "test": "node scanner-pwa/tools/test.mjs",
+    "serve": "node scanner-pwa/tools/serve.mjs"
+  },
+  "dependencies": {
+    "@capacitor-mlkit/text-recognition": "^8.2.1",
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/filesystem": "^8.1.5",
+    "@capacitor/share": "^8.0.3",
+    "tesseract.js": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.6.0",
+    "esbuild": "^0.28.2"
+  }
+}

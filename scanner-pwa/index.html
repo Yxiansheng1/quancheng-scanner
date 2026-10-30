@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0e1014">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="扫描">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="styles.css">
+<title>扫描</title>
+</head>
+<body>
+
+<!-- 首页 -->
+<section id="home" class="screen active">
+  <header class="bar">
+    <h1>扫描</h1>
+    <button id="btnClear" class="ghost danger" hidden>清空</button>
+  </header>
+
+  <div id="empty" class="empty">
+    <div class="emptyIcon">▤</div>
+    <p class="emptyTitle">还没有页面</p>
+    <p class="emptySub">点下面的按钮，拍一张或从相册选一张</p>
+  </div>
+
+  <div id="pages" class="pages"></div>
+
+  <footer class="bar bottom">
+    <button id="btnAdd" class="primary">添加页面</button>
+    <button id="btnExport" class="secondary" disabled>导出 PDF</button>
+  </footer>
+</section>
+
+<!-- 编辑：调整四角 -->
+<section id="editor" class="screen">
+  <header class="bar">
+    <button id="btnCancel" class="ghost">取消</button>
+    <span class="title">调整边框</span>
+    <button id="btnAuto" class="ghost">重新识别</button>
+  </header>
+
+  <div id="stage" class="stage">
+    <canvas id="stageCanvas"></canvas>
+    <svg id="overlay" class="overlay" xmlns="http://www.w3.org/2000/svg">
+      <polygon id="quad" />
+      <g id="handles"></g>
+    </svg>
+  </div>
+
+  <div class="controls">
+    <div class="modes" id="modes">
+      <button data-mode="color" class="active">原色</button>
+      <button data-mode="gray">增强</button>
+      <button data-mode="bw">黑白</button>
+    </div>
+    <div class="previewWrap">
+      <canvas id="previewCanvas"></canvas>
+      <span class="previewLabel">预览</span>
+    </div>
+  </div>
+
+  <footer class="bar bottom">
+    <button id="btnConfirm" class="primary">完成</button>
+  </footer>
+</section>
+
+<!-- 查看单页 -->
+<section id="viewer" class="screen">
+  <header class="bar">
+    <button id="btnViewClose" class="ghost">返回</button>
+    <span class="title">第 <b id="viewIndex">1</b> 页</span>
+    <button id="btnViewDelete" class="ghost danger">删除</button>
+  </header>
+  <div class="viewerBody">
+    <img id="viewImage" alt="扫描结果">
+  </div>
+</section>
+
+<!-- iOS 上不加 capture，系统会自己弹出「拍照 / 照片图库」的选择 -->
+<input id="fileInput" type="file" accept="image/*" multiple hidden>
+
+<div id="sheet" class="sheet" hidden>
+  <div class="sheetMask" data-act="cancel"></div>
+  <div class="sheetBody">
+    <div class="sheetTitle">导出</div>
+    <button data-act="pdf">
+      <b>PDF</b>
+      <span>图片版，样子不变，适合存档和打印</span>
+    </button>
+    <button data-act="word">
+      <b>Word</b>
+      <span>可编辑，手机上直接识别文字</span>
+    </button>
+    <button data-act="txt">
+      <b>TXT</b>
+      <span>纯文字，最省事</span>
+    </button>
+    <button data-act="cancel" class="sheetCancel">取消</button>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<div id="busy" class="busy" hidden><div class="spinner"></div><span>处理中…</span></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

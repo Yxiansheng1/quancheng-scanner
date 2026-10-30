@@ -1,0 +1,12 @@
+{
+  "name": "scanner-pwa",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "离线文档扫描 PWA：自动找边、透视拉正、增强、导出 PDF",
+  "scripts": {
+    "test": "node tools/test.mjs",
+    "serve": "node tools/serve.mjs",
+    "icons": "node tools/make-icons.cjs"
+  }
+}

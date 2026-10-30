@@ -1,0 +1,16 @@
+# 依赖和构建产物
+node_modules/
+www/
+
+# 签名文件绝对不要进仓库
+*.jks
+*.keystore
+keystore.properties
+
+# 杂项
+*.log
+.DS_Store
+Thumbs.db
+__pycache__/
+
+# 安卓构建目录的忽略规则在 android/.gitignore 里（Capacitor 自带）
