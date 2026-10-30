@@ -16,7 +16,9 @@ async function ensureWorker() {
       workerPath: `${VENDOR}/worker.min.js`,
       corePath: `${VENDOR}`,
       langPath: `${VENDOR}`,
-      gzip: true,
+      // 语言包用未压缩的 .traineddata：Android 打包会自动解压 .gz 并去掉扩展名，
+      // 那样 Tesseract 就找不到文件，识别会直接失败。
+      gzip: false,
       cacheMethod: 'none',
       logger: (m) => {
         if (currentLogger) currentLogger(m);
