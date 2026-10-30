@@ -494,13 +494,22 @@ function closeSheet() {
 
 function bindEvents() {
   $('#btnAdd').addEventListener('click', () => {
-    const input = $('#fileInput');
+    $('#sourceSheet').hidden = false;
+  });
+
+  const sourceSheet = $('#sourceSheet');
+  sourceSheet.addEventListener('click', (ev) => {
+    const el = ev.target.closest('[data-src]');
+    if (!el) return;
+    const kind = el.dataset.src;
+    sourceSheet.hidden = true;
+    if (kind === 'cancel') return;
+    const input = kind === 'camera' ? $('#cameraInput') : $('#galleryInput');
     input.value = '';
     input.click();
   });
 
-  $('#fileInput').addEventListener('change', async (ev) => {
-    const files = Array.from(ev.target.files || []);
+  async function handleFiles(files) {
     if (!files.length) return;
     busy(true, '读取图片…');
     await tick();
@@ -514,6 +523,14 @@ function bindEvents() {
       busy(false);
       toast(e.message || '读取失败');
     }
+  }
+
+  $('#cameraInput').addEventListener('change', (ev) => {
+    handleFiles(Array.from(ev.target.files || []));
+  });
+
+  $('#galleryInput').addEventListener('change', (ev) => {
+    handleFiles(Array.from(ev.target.files || []));
   });
 
   $('#btnCancel').addEventListener('click', async () => {

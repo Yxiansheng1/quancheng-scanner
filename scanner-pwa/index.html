@@ -81,8 +81,9 @@
   </div>
 </section>
 
-<!-- iOS 上不加 capture，系统会自己弹出「拍照 / 照片图库」的选择 -->
-<input id="fileInput" type="file" accept="image/*" multiple hidden>
+<!-- 两个入口：拍照走系统相机，相册可多选。安卓 WebView 只有带 capture 才会真的开相机 -->
+<input id="cameraInput" type="file" accept="image/*" capture="environment" hidden>
+<input id="galleryInput" type="file" accept="image/*" multiple hidden>
 
 <div id="sheet" class="sheet" hidden>
   <div class="sheetMask" data-act="cancel"></div>
@@ -101,6 +102,22 @@
       <span>纯文字，最省事</span>
     </button>
     <button data-act="cancel" class="sheetCancel">取消</button>
+  </div>
+</div>
+
+<div id="sourceSheet" class="sheet" hidden>
+  <div class="sheetMask" data-src="cancel"></div>
+  <div class="sheetBody">
+    <div class="sheetTitle">添加页面</div>
+    <button data-src="camera">
+      <b>拍照</b>
+      <span>打开相机，对着纸质文件拍</span>
+    </button>
+    <button data-src="gallery">
+      <b>从相册选</b>
+      <span>可以一次选多张，逐张调整</span>
+    </button>
+    <button data-src="cancel" class="sheetCancel">取消</button>
   </div>
 </div>
 
